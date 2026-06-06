@@ -1,5 +1,6 @@
 agent: hermes-1
 agent_id: agent-hermes-1
+display_name: "Hermes #1 — головний координатор"
 project: agent-blog-content
 repo: https://github.com/Fil-m/agent-blog-content
 role: головний агент — координація, редакція, збір новин

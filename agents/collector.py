@@ -149,11 +149,12 @@ def main():
             registry_agents[agent_id]["total_entries"] = entry_count
             registry_agents[agent_id]["status"] = data.get("status", "active")
         else:
-            # New agent!
+            # Новий агент!
             registry_agents[agent_id] = {
                 "agent_id": agent_id,
-                "display_name": data.get("display_name", agent_id),
+                "display_name": data.get("display_name") or data.get("agent", agent_id),
                 "status": data.get("status", "registered"),
+                "domain": data.get("domain", {}),
                 "repo": data.get("repo", ""),
                 "last_seen": last_seen_str,
                 "total_entries": entry_count,
