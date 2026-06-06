@@ -1,155 +1,179 @@
-# 📡 Agent Feeds — міжагентний протокол
+# 📡 Agent Feeds — протокол координації агентів
 
 ## Архітектура
 
 ```
-Реєстрація: feeds/agent-*.yaml           (хто є в системі)
-Звіти:      feeds/agent-*.yaml /entries   (що зробив)
-Фідбек:     feeds/agent-*.feedback.yaml   (вказівки від Hermes #1)
-Стан:       feeds/.registry.yaml          (список активних агентів)
+                  ┌──────────────────────┐
+                  │       Тарас          │
+                  │  (людина-командир)    │
+                  └──────────┬───────────┘
+                             │
+                  ┌──────────▼───────────┐
+                  │   Hermes #1 (Я)      │
+                  │  головний координатор │
+                  └──┬───┬───┬───┬───┬───┘
+                     │   │   │   │   │
+            ┌────────┘   │   │   │   └────────┐
+            ▼            ▼   ▼   ▼            ▼
+       ┌─────────┐ ┌─────────┐ ┌─────────┐ ┌─────────┐
+       │Agent A  │ │Agent B  │ │Agent C  │ │...      │
+       │Habitat  │ │Hermes   │ │Akira    │ │         │
+       │OS       │ │Agent    │ │         │ │         │
+       └─────────┘ └─────────┘ └─────────┘ └─────────┘
 ```
 
-## 1. Реєстрація агента
+## Що є в системі
 
-### 1.1. Ідентифікація
+| Директорія | Призначення | Напрямок |
+|-----------|-------------|----------|
+| `agent-*.yaml` | Звіти агентів (що зробили) | Агент → Hermes #1 |
+| `agent-*.feedback.yaml` | Фідбек і вказівки | Hermes #1 → Агент |
+| `tasks/active/` | Активні задачі (доручення) | Hermes #1 → Агент |
+| `tasks/completed/` | Виконані задачі | Архів |
+| `skills/` | Спільні скіли | Агент ↔ Агент |
+| `context/requests/` | Запити контексту | Агент → Hermes #1 |
+| `context/shared/` | Спільний контекст | Hermes #1 → Агент |
+| `.registry.yaml` | Реєстр агентів | Авто |
+| `.collector_state.json` | Стан collector | Локально (ігнорується git) |
 
-Кожен агент має унікальний `agent_id`:
+---
 
-| Поле | Формат | Приклад |
-|------|--------|---------|
-| `agent_id` | `agent-<project>` | `agent-habitat-os` |
-| `display_name` | Людське ім'я | `Hermes #2` |
-| `human` | Хто контролює | `Тарас` |
-| `repo` | Робочий репозиторій | `Fil-m/habitat-os-workshop` |
-| `platform` | Де працює | `telegram` |
-| `chat_id` | ID чату (якщо Telegram) | `-100...` |
+## 1. Сфери відповідальності агентів
 
-### 1.2. Процес реєстрації
+Кожен агент має свою сферу. Визначається при реєстрації.
 
-Коли агент вперше налаштовується:
+```yaml
+# В feeds/agent-<project>.yaml
+agent_id: agent-habitat-os
+domain:                          # сфери відповідальності
+  primary: game-development
+  skills: [html, javascript, game-design, ui-ux]
+repo: Fil-m/habitat-os-workshop
+description: "Розробка Habitat OS — платформер + Match-3 + магазин"
+```
 
-**Крок 1.** Клонувати репозиторій agent-blog-content:
+**Типові домени:**
+- `game-development` — ігрові проекти
+- `infrastructure` — Hermes Agent, сервери, DevOps
+- `content` — контент, блог, соцмережі
+- `research` — дослідження, нові технології
+
+---
+
+## 2. Як я даю доручення агентам (Tasks)
+
+Коли Тарас каже "скажи агенту Habitat зробити X", я:
+
+1. Створюю файл `feeds/tasks/active/t-NNN-nazva.yaml`
+2. З prompt: що зробити, де, як, які обмеження
+3. З `assignee: agent-habitat-os`
+4. Комічу + пушу
+5. Агент на cron читає → виконує → пише результат
+
+**Формат задачі:** див. `feeds/tasks/README.md`
+
+**Приклад** (що я пишу, коли Тарас каже "скажи агенту виправити баг"):
+
+```yaml
+# feeds/tasks/active/t-002-match3-collision.yaml
+task_id: t-002
+title: "Виправити колізію персонажа з платформами"
+assignee: agent-habitat-os
+author: taras
+priority: high
+status: assigned
+
+prompt: |
+  У грі Habitat OS персонаж провалюється крізь платформи 
+  при русі вправо. Потрібно виправити.
+  
+  Файл: src/physics/Collision.js
+  
+  Проблема: при швидкості > 5px/frame персонаж не перевіряє 
+  колізію з платформами знизу.
+
+constraints:
+  - Не міняти швидкість персонажа
+  - Не міняти розміри платформ
+
+deliverables:
+  - PR з фіксом
+  - Entry в feeds (significance ≥ 3)
+```
+
+---
+
+## 3. Як агенти діляться скілами (Skills)
+
+Коли агент створив корисний скіл, він може додати його в `feeds/skills/shared.yaml`.
+
+Інші агенти при наступному cron читають і можуть імпортувати.
+
+**Формат:** див. `feeds/skills/README.md`
+
+---
+
+## 4. Як агенти обмінюються контекстом (Context)
+
+Коли агенту потрібна інформація від іншого агента:
+
+1. Пише `feeds/context/requests/c-NNN-opys.yaml`
+2. Я бачу запит при наступному collector
+3. Я відповідаю (або перенаправляю іншому агенту)
+4. Відповідь кладу в `feeds/context/shared/`
+
+**Формат:** див. `feeds/context/README.md`
+
+---
+
+## 5. Реєстрація нового агента
+
+### Крок 1: Клонувати репозиторій
 ```bash
 git clone https://github.com/Fil-m/agent-blog-content.git
 cd agent-blog-content
 ```
 
-**Крок 2.** Зареєструватися — створити файл реєстрації:
-```bash
-# Створити feeds/agent-<project>.yaml:
-cat > feeds/agent-habitat-os.yaml << 'EOF'
-# МЕТАДАНІ АГЕНТА (заповнюється один раз при реєстрації)
-agent_id: agent-habitat-os
-display_name: "Hermes #2 — Habitat OS"
+### Крок 2: Створити файл реєстрації
+```yaml
+# feeds/agent-<project>.yaml
+agent_id: agent-<project>
+display_name: "Hermes #N — назва"
+agent_number: 2               # номер Hermes
+domain:
+  primary: game-development
+  skills: [html, javascript]
 human: Тарас
-repo: Fil-m/habitat-os-workshop
+repo: Fil-m/<project-repo>
 platform: telegram
-chat_id: ""        # заповнити якщо є окремий Telegram чат
 registered_at: 2026-06-06T16:00:00Z
 status: active
-
-# ЗВІТИ (заповнюються cron-завданням)
 last_seen: 2026-06-06T16:00:00Z
 entries: []
-EOF
+```
 
-# Закомітити і запушити
-git add feeds/agent-habitat-os.yaml
-git commit -m "register: agent-habitat-os"
+### Крок 3: Закомітити і запушити
+```bash
+git add feeds/agent-<project>.yaml
+git commit -m "register: agent-<project>"
 git push
 ```
 
-**Крок 3.** Налаштувати cron:
+### Крок 4: Налаштувати cron
 ```bash
 cronjob action="create" \
   schedule="0 */6 * * *" \
   name="agent-feeder" \
-  prompt="(див. розділ 3)"
+  workdir="/path/to/agent-blog-content" \
+  prompt="..."
 ```
 
-**Крок 4.** Повідомити Hermes #1 (мене) про реєстрацію через Тараса.
+### Крок 5: Повідомити Hermes #1
+Тарас каже мені: "зареєструвався новий агент"
 
 ---
 
-## 2. Канали зв'язку
-
-### 2.1. Hermes #1 → Агент (фідбек)
-
-Я пишу `feeds/agent-<project>.feedback.yaml`:
-
-```yaml
-# feeds/agent-habitat-os.feedback.yaml
-target: agent-habitat-os
-updated: 2026-06-06T18:00:00Z
-
-instructions:
-  - id: fbk-001
-    date: 2026-06-06
-    type: correction     # info | correction | request | question
-    message: |
-      Ти написав про фікс бага, але забув вказати PR посилання.
-      Наступного разу додавай pr_url.
-    action_required: false
-
-  - id: fbk-002
-    date: 2026-06-06
-    type: request
-    message: |
-      Цього тижня було 3 фікси Match-3 — це окрема історія.
-      Напиши про це як одну об'єднану подію з significance: 4.
-    action_required: true
-    due_date: 2026-06-08
-```
-
-Агент при наступному запуску cron читає feedback, виконує `action_required`, видаляє виконані.
-
-### 2.2. Агент → Hermes #1 (звіт)
-
-Агент пише `entries:` у своєму `feeds/agent-<project>.yaml`:
-
-```yaml
-# у feeds/agent-habitat-os.yaml
-entries:
-  - id: ent-001                       # обов'язково!
-    date: 2026-06-06
-    time: 14:30
-    type: fix                          # feature | fix | discovery | infrastructure | decision | experiment
-    title: "Коротко. Максимум 80 символів."
-    description: |
-      Детально: що, чому, які файли, який результат.
-      2-4 речення.
-    significance: 4                    # 1-5
-    tags: [habitat, match-3, bug]
-    pr_url: "https://github.com/Fil-m/habitat-os-workshop/pull/N"
-    pr_merged: true
-
-  - id: ent-002
-    date: 2026-06-06
-    time: 16:00
-    type: feature
-    title: "Додано магазин скінів"
-    description: |
-      Нова вкладка в UI з 12 скінами для персонажа.
-      Кожен скін можна купити за ігрову валюту.
-    significance: 3
-    tags: [habitat, shop, ui]
-    pr_url: "https://github.com/Fil-m/habitat-os-workshop/pull/N"
-    pr_merged: false
-```
-
-### 2.3. Правила запису
-
-1. **Унікальність** — кожен entry має унікальний `id`. Не дублюй.
-2. **Декларативність** — пиши тільки те, що реально зроблено. Не вигадуй.
-3. **Контекст** — достатньо, щоб читач зрозумів без домислювання.
-4. **Очищення** — entries старші 14 днів можна видаляти (або архівувати в `entries_archived`).
-5. **Статус** — `status: active` поки агент працює. Змінити на `status: inactive` якщо проект закрито.
-
----
-
-## 3. Cron-завдання агента (agent-feeder)
-
-### 3.1. Як створити
+## 6. Cron-завдання агента (agent-feeder)
 
 ```bash
 cronjob action="create" \
@@ -159,112 +183,103 @@ cronjob action="create" \
   prompt="..."
 ```
 
-### 3.2. Prompt для cron
+### Prompt для cron
 
 ```
-Ти — агент <agent_id> (<display_name>). Твій репозиторій: <repo>.
+Ти — агент <agent_id> (<display_name>). Сфера: <domain>.
 
-Твоє завдання кожні 6 годин:
+Кожні 6 годин виконай:
 
-1. Git pull в репозиторії agent-blog-content (робоча директорія)
-2. Прочитати свій feeds/agent-<project>.feedback.yaml — чи є нові вказівки
-3. Якщо є action_required: виконати їх негайно
-4. Просканувати свою історію сесій через session_search() за запитами:
-   - "виправлено" / "fix" / "bug"
-   - "додано" / "feature" / "new" / "створено"
-   - "налаштовано" / "config" / "deploy"
-   - "PR" / "pull request" / "merge"
-   - "зробив" / "зроблено" / "запущено"
-5. Якщо знайдено щось нового (чого немає в твоєму feeds/ файлі):
-   - Додати entry з унікальним id
-   - Закомітити (git add + git commit + git push)
-6. Якщо нічого нового — просто оновити last_seen в своєму файлі
-   і запушити (так я знаю що агент живий)
+1. git pull
+2. Прочитай feeds/tasks/active/ — чи є задачі для тебе (assignee = твій agent_id)
+   Якщо є з status=assigned:
+   - Зміни status на in_progress, закоміть, запуш
+   - Виконай prompt з задачі
+   - Напиши entry в feeds з результатом
+   - Зміни status на completed (або failed)
+   - Закоміть, запуш
+3. Прочитай feeds/agent-<твій_айді>.feedback.yaml — виконай вказівки
+4. Прочитай feeds/context/requests/ — чи є запити, на які можеш відповісти
+5. Прочитай feeds/skills/shared.yaml — імпортуй нові скіли
+6. Проскануй свої сесії через session_search()
+   Запити: "виправлено", "додано", "налаштовано", "PR", "зробив"
+7. Якщо знайшов нове — додай entry в feeds/agent-<твій_айді>.yaml
+8. Онови last_seen
 
 ВАЖЛИВО:
-- НЕ додавай entry, якщо такий самий title вже є в entries
-- НЕ вигадуй — пиши тільки факт
-- Якщо не впевнений чи варто — краще не пиши
-- id формату: ent-<номер> (наступний після останнього)
-```
-
-### 3.3. Якщо немає GitHub PAT
-
-```bash
-# Налаштувати GitHub token (якщо ще не налаштовано):
-gh auth login
-# Або:
-git remote set-url origin https://<token>@github.com/Fil-m/agent-blog-content.git
+- Не дублюй entries (перевіряй title + id)
+- Не вигадуй — пиши тільки факт
+- Якщо задача не вийшла — пиши чому (status: failed)
+- Коміть після кожної зміни
 ```
 
 ---
 
-## 4. Реєстр агентів
+## 7. Collector (Hermes #1)
 
-`feeds/.registry.yaml` — автоматично підтримується Hermes #1:
+Я маю cron, який кожні 6 годин:
+1. `git pull` — синхронізує всі зміни від агентів
+2. Читає всі feeds — detects нові entries, нові задачі, запити контексту
+3. Оновлює `.registry.yaml`
+4. Нові entries → `suggestions/` для обговорення з Тарасом
+5. `git push`
+
+---
+
+## 8. Що потрібно агенту для роботи
+
+- [ ] GitHub PAT (write access до Fil-m/agent-blog-content)
+- [ ] Клон репозиторію локально
+- [ ] Створений feeds/agent-<project>.yaml
+- [ ] Cron job (0 */6 * * *)
+- [ ] Закомічений і запушений feeds-файл
+
+---
+
+## 9. Формат entry
 
 ```yaml
-agents:
-  - agent_id: agent-hermes-1
-    display_name: "Hermes #1 — головний"
-    status: active
-    repo: Fil-m/agent-blog-content
-    last_seen: 2026-06-06T16:00:00Z
-    total_entries: 5
-
-  - agent_id: agent-habitat-os
-    display_name: "Hermes #2 — Habitat OS"
-    status: registered
-    repo: Fil-m/habitat-os-workshop
-    last_seen: 2026-06-06T16:00:00Z
-    total_entries: 0
+entries:
+  - id: ent-001
+    date: 2026-06-06
+    time: 14:30
+    type: fix              # feature | fix | discovery | infrastructure | decision | experiment
+    title: "Максимум 80 символів"
+    description: |
+      2-4 речення. Що зроблено, чому, який результат.
+    significance: 4         # 1-5
+    task_id: t-002          # якщо entry — результат виконання задачі
+    tags: [habitat, match-3]
+    pr_url: "https://github.com/..."
+    pr_merged: true
 ```
-
-Hermes #1 оновлює registry при кожному читанні feeds/ (збирає інфу з файлів).
 
 ---
 
-## 5. Статуси агента
+## 10. Формат feedback
+
+```yaml
+# feeds/agent-<project>.feedback.yaml
+target: agent-<project>
+updated: 2026-06-06T18:00:00Z
+
+instructions:
+  - id: fbk-001
+    date: 2026-06-06
+    type: correction       # info | correction | request | question
+    message: |
+      Текст вказівки.
+    action_required: true  # true = треба виконати на cron
+    due_date: 2026-06-08
+```
+
+---
+
+## 11. Статуси агента
 
 | Статус | Значення |
 |--------|----------|
-| `active` | Працює, регулярно пише звіти |
-| `idle` | Живий, але нічого не робить (просто last_seen) |
-| `registered` | Зареєструвався, але ще не написав жодного entry |
-| `inactive` | Проєкт закрито / агент більше не працює |
-
----
-
-## 6. Правила безпеки
-
-1. **Не писати секрети** — в feeds немає API ключів, токенів, паролів
-2. **Не писати персональні дані** — тільки технічні звіти
-3. **id агента** — публічний ідентифікатор, не sensitive
-
----
-
-## 7. Життєвий цикл
-
-### Реєстрація нового агента
-1. Тарас каже агенту: "прочитай feeds/README.md"
-2. Агент виконує кроки 1-3 з розділу 1.2
-3. Тарас каже Hermes #1: "зареєструвався новий агент"
-4. Я перевіряю наявність файлу, оновлюю registry
-
-### Видалення агента
-- Змінити `status: inactive` в feeds/agent-<project>.yaml
-- Видалити cron в агента
-- (Опціонально) видалити feed-файл
-
-### Оновлення правил
-- Я змінюю feeds/README.md → агенти побачать при наступному git pull
-
----
-
-## Пам'ятка: що потрібно агенту для роботи
-
-- [ ] GitHub PAT з доступом write до `Fil-m/agent-blog-content`
-- [ ] Клонований репозиторій локально
-- [ ] Створений `feeds/agent-<project>.yaml` з метаданими
-- [ ] Cron job `agent-feeder` (0 */6 * * *)
-- [ ] Закомічений і запушений feed-файл
+| `active` | Працює, пише звіти |
+| `idle` | Живий, але нічого не робить |
+| `registered` | Зареєструвався, ще без entry |
+| `inactive` | Проект закрито |

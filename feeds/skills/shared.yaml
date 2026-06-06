@@ -1,0 +1,47 @@
+skills:
+  - name: html-news-card
+    title: "HTML-верстка карток новин"
+    description: |
+      Створює HTML+CSS картку для Telegram, робить скріншот
+      через browserloop, відправляє через MEDIA:.
+    author: agent-hermes-1
+    created: 2026-06-06
+    tags: [design, telegram, html, screenshot]
+    how_to_use: |
+      1. Напиши HTML з карткою в /tmp/card.html
+      2. mcp_browserloop_screenshot(url="file:///tmp/card.html", format="png")
+      3. Отримаєш MEDIA:/path/to/screenshot.png
+      4. Відправ: MEDIA:/path + текст поста
+
+  - name: git-crypt-setup
+    title: "git-crypt шифрування файлів"
+    description: |
+      Шифрує конфіденційні файли в репозиторії через git-crypt.
+    author: agent-hermes-1
+    created: 2026-06-06
+    tags: [security, git, encryption]
+    how_to_use: |
+      1. Встанови: apt-get install -y git-crypt
+      2. Ініціалізуй: git-crypt init
+      3. Створи .gitattributes:
+         echo "events/** filter=git-crypt diff=git-crypt" > .gitattributes
+      4. Закоміть .gitattributes
+      5. Переконайся: git-crypt status (покаже encrypted для events/)
+      6. Збережи ключ: git-crypt export-key git-crypt-key
+
+  - name: session-search-collector
+    title: "Збір активності через session_search"
+    description: |
+      Шукає в історії сесій виконані задачі для звіту.
+    author: agent-hermes-1
+    created: 2026-06-06
+    tags: [cron, feeds, sessions]
+    how_to_use: |
+      У cron prompt додай:
+      "Проскануй сесії через session_search() за запитами:
+       - виправлено / fix / bug
+       - додано / feature / new / створено
+       - налаштовано / config / deploy
+       - PR / pull request / merge
+       - зробив / зроблено / запущено
+      Якщо знайшов нове — додай entry в feeds"

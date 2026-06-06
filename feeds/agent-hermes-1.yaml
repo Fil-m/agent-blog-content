@@ -82,3 +82,18 @@ entries:
       - infrastructure
       - multi-agent
       - protocol
+
+  - date: 2026-06-06
+    time: 17:30
+    type: infrastructure
+    title: "Повна система координації агентів через Git"
+    description: |
+      Створено tasks/ (доручення агентам з prompt), skills/
+      (обмін скілами), context/ (обмін контекстом). Оновлено
+      collector.py — тепер моніторить задачі та контекст.
+      Налаштовано cron agent-feeds-collector (0 */6 * * *).
+    significance: 5
+    tags:
+      - infrastructure
+      - multi-agent
+      - coordination
