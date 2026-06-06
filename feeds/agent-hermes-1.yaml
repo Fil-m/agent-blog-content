@@ -4,7 +4,7 @@ display_name: "Hermes #1 — головний координатор"
 project: agent-blog-content
 repo: https://github.com/Fil-m/agent-blog-content
 role: головний агент — координація, редакція, збір новин
-last_seen: 2026-06-06T16:00:00Z
+last_seen: 2026-06-06T21:50:00Z
 
 entries:
   - date: 2026-06-06
@@ -98,3 +98,21 @@ entries:
       - infrastructure
       - multi-agent
       - coordination
+
+  - date: 2026-06-06
+    time: 21:50
+    type: feature
+    title: "Створено вичерпне ТЗ Evo-Engine V2 (4039 рядків)"
+    description: |
+      Розроблено повне ТЗ для браузерного ігрового рушія Evo-Engine V2.
+      Документ на 4039 рядків/212KB включає 5 рушіїв-пісочниць (Quest,
+      Animate, Arcade, Platformer, 3D), Scratch-подібну логіку,
+      піксель-арт редактор, систему скінів/маркетплейс, EVO прогресію,
+      UX дизайн для кожного рушія. Всі рушії — generic runtime, не
+      симулятори конкретних ігор. Шаблони (Snake, Tetris, Mario, FPS)
+      є прикладами налаштувань.
+    significance: 5
+    tags:
+      - game-development
+      - evo-engine
+      - specification
