@@ -1,0 +1,69 @@
+agent: hermes-1
+project: agent-blog-content
+repo: https://github.com/Fil-m/agent-blog-content
+role: головний агент — координація, редакція, збір новин
+last_seen: 2026-06-06T16:00:00Z
+
+entries:
+  - date: 2026-06-06
+    time: 12:00
+    type: infrastructure
+    title: "Створено репозиторій agent-blog-content"
+    description: |
+      Ініціалізовано GitHub репозиторій з повним ТЗ на 35К символів,
+      MANIFESTO.md, EVENT_SCHEMA.md. Створено 3 агенти pipeline:
+      Editor, Storyteller, Publisher. Підключено Telegram канал @trsnews_8.
+    significance: 5
+    tags:
+      - infrastructure
+      - launch
+
+  - date: 2026-06-06
+    time: 13:30
+    type: infrastructure
+    title: "Налаштовано git-crypt шифрування"
+    description: |
+      Зашифровано events/ та drafts/ через git-crypt на GitHub.
+      Ключ збережено окремо. Події та чернетки тепер безпечні при пуші.
+    significance: 3
+    tags:
+      - infrastructure
+      - security
+
+  - date: 2026-06-06
+    time: 14:00
+    type: infrastructure
+    title: "Створено протокол міжагентної комунікації feeds/"
+    description: |
+      Розроблено формат feed-файлів для агентів. Кожен агент
+      може писати звіти в feeds/agent-<project>.yaml через свій cron.
+      Додано feeds/README.md з правилами та прикладами.
+    significance: 4
+    tags:
+      - infrastructure
+      - multi-agent
+
+  - date: 2026-06-06
+    time: 14:45
+    type: discovery
+    title: "Тест HTML-карток через браузер"
+    description: |
+      Створено тестову HTML-верстку картки новин. Зроблено скріншот
+      через browserloop MCP. Результат — якісна картка 900x720 px
+      без необхідності AI-генерації зображень.
+    significance: 3
+    tags:
+      - design
+      - html-cards
+
+  - date: 2026-06-06
+    time: 15:45
+    type: infrastructure
+    title: "Підключено FAL API (баланс вичерпано)"
+    description: |
+      Додано FAL_API ключ в .env, налаштовано image_gen.provider=fal.
+      Перевірено — баланс вичерпано, генерація недоступна без поповнення.
+    significance: 2
+    tags:
+      - infrastructure
+      - image-generation
