@@ -67,3 +67,17 @@ entries:
     tags:
       - infrastructure
       - image-generation
+
+  - date: 2026-06-06
+    time: 16:30
+    type: infrastructure
+    title: "Створено повний протокол міжагентної комунікації"
+    description: |
+      Переписано feeds/README.md — додано реєстрацію,
+      ідентифікацію, канали зв'язку (feed + feedback),
+      формат entry, cron інструкції, статуси, життєвий цикл.
+    significance: 5
+    tags:
+      - infrastructure
+      - multi-agent
+      - protocol
