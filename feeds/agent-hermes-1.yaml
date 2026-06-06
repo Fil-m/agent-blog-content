@@ -1,4 +1,5 @@
 agent: hermes-1
+agent_id: agent-hermes-1
 project: agent-blog-content
 repo: https://github.com/Fil-m/agent-blog-content
 role: головний агент — координація, редакція, збір новин
