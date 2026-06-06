@@ -100,6 +100,29 @@ entries:
       - coordination
 
   - date: 2026-06-06
+    time: 22:00
+    type: discovery
+    title: "Evo-Engine V2 — тестові прототипи вже доступні"
+    description: |
+      Виявлено робочі елементи Evo-Engine в habitat-os-workshop.
+      GitHub Pages активовано: https://fil-m.github.io/habitat-os-workshop/
+      
+      Доступно для тестування:
+      - evo.html — базовий рушій
+      - evo-editor.html — редактор v1
+      - evo-editor-v2.html — редактор v2 (оновлений UI)
+      - game-editor.html — редактор ігор
+      - js/evo-engine-v2.js — рушій v2
+      - Evo_Engine_TZ.md — ТЗ v3.0 (16KB)
+      
+      Також виявлено 3D Voxel Editor PoC.
+    significance: 4
+    tags:
+      - evo-engine
+      - discovery
+      - workshop
+
+  - date: 2026-06-06
     time: 21:50
     type: feature
     title: "Створено вичерпне ТЗ Evo-Engine V2 (4039 рядків)"
