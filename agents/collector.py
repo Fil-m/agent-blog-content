@@ -6,8 +6,10 @@ Agent Feeds Collector — Hermes #1
 2. Читає всі feeds/agent-*.yaml
 3. Оновлює .registry.yaml (хто є, статус, останній entry)
 4. Виявляє нові entries (яких не було в registry)
-5. Нові entries → suggestions/ для обговорення з Тарасом
-6. Git push registry
+5. Моніторить tasks/ — статус задач, нові завершені
+6. Моніторить context/ — нові запити від агентів
+7. Нові entries + completed tasks → suggestions/ для Тараса
+8. Git push registry
 """
 
 import os
