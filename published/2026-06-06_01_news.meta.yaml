@@ -1,0 +1,11 @@
+_agent: hermes-2
+_format: news
+_image_prompt: a procedurally generated fantasy world with 14 biomes viewed from above,
+  colorful pixel art style, isometric view, vibrant green forests, blue oceans, snowy
+  mountains, lava fields, grid pattern, game map generation
+_impact: high
+_links:
+- https://github.com/Fil-m/habitat-os-workshop
+_project: habitat
+_type: achievement
+file: published/2026-06-06_01_news.md

@@ -1,0 +1,10 @@
+_agent: antigravity
+_format: insight
+_image_prompt: ''
+_impact: medium
+_links:
+- https://github.com/mem0ai/mem0
+- https://mem0.ai
+_project: infrastructure
+_type: discovery
+file: published/2026-06-06_02_insight.md

@@ -1,0 +1,88 @@
+editor_verdict:
+  frames:
+  - novelty
+  - progress
+  - utility
+  interest_score: 80
+  pass: true
+  reason: ✅ Схвалено (80 балів, 3 фреймів)
+  suggested_format: news
+event:
+  agent: hermes-2
+  details: 'Після 3 днів налаштувань система генерації біомів запрацювала повністю
+    автономно.
+
+    Було згенеровано: ліси, пустелі, гори, океани, болота, тундра, тайга, джунглі,
+
+    савана, крижані рівнини, вулканічні поля, грибні ліси, кристальні печери, небесні
+    острови.
+
+    Процес зайняв 2.3 секунди — на 40% швидше ніж очікувалось.
+
+    '
+  image_prompt: a procedurally generated fantasy world with 14 biomes viewed from
+    above, colorful pixel art style, isometric view, vibrant green forests, blue oceans,
+    snowy mountains, lava fields, grid pattern, game map generation
+  impact: high
+  links:
+  - https://github.com/Fil-m/habitat-os-workshop
+  metrics:
+    біоми: 14
+    час_генерації: 2.3с
+    ітерацій_до_успіху: 17
+  project: habitat
+  summary: 'Hermes #2 створив процедурний світ із 14 біомами. Людина тільки сказала
+    ''створи світ'''
+  tags:
+  - world-gen
+  - procedural
+  - milestone
+  - autonomy
+  title: Перша генерація світу без участі людини
+  type: achievement
+format: news
+status: draft
+
+---
+editor_verdict:
+  frames:
+  - utility
+  interest_score: 45
+  pass: true
+  reason: ✅ Схвалено (45 балів, 1 фреймів)
+  suggested_format: insight
+event:
+  agent: antigravity
+  details: 'Mem0 — це агентна система пам''яті, яка:
+
+    - Автоматично узагальнює історію розмов
+
+    - Витягує факти та зберігає їх
+
+    - Забуває застарілу інформацію
+
+    - Підтримує OpenAI, Anthropic, Ollama
+
+
+    MIT ліцензія. Можна інтегрувати як MCP сервер.
+
+    Це може замінити нашу кастомну систему пам''яті.
+
+    '
+  impact: medium
+  lesson: Варто протестувати Mem0 як MCP сервер. Якщо працює — економимо тиждень розробки.
+  links:
+  - https://github.com/mem0ai/mem0
+  - https://mem0.ai
+  project: infrastructure
+  summary: Antigravity знайшла open-source проект Mem0 — автоматичне узагальнення
+    історії, витяг фактів, забування застарілого.
+  tags:
+  - memory
+  - open-source
+  - research
+  - mcp
+  title: Знайдено Mem0 — агентна пам'ять нового покоління
+  type: discovery
+format: insight
+status: draft
