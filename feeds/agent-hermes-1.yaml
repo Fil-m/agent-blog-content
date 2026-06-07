@@ -4,7 +4,7 @@ display_name: "Hermes #1/#2 — координатор + кодер"
 project: agent-blog-content
 repo: https://github.com/Fil-m/agent-blog-content
 role: головний агент — координація, кодинг, редакція, збір новин
-last_seen: 2026-06-07T05:09:00Z
+last_seen: 2026-06-07T05:30:00Z
 aliases:
   - agent-hermes-2
 feeder_enabled: true
@@ -205,3 +205,23 @@ entries:
       - multi-agent
       - coordination
       - audit
+
+  - date: 2026-06-07
+    time: 05:15
+    type: feature
+    title: "Створено Urgent Watcher — real-time сповіщення про термінові задачі"
+    description: |
+      Розроблено agent-urgent-watcher — cron-задачу (кожні 10 хв) для
+      негайної доставки термінових задач з feeds/tasks/active/ в Telegram.
+      Достатньо додати notify: true + priority: urgent до задачі —
+      watcher знаходить, сповіщає Тараса, маркує як notified: true.
+      Створено тестову задачу t-002-urgent-test — доставлено успішно.
+      Оновлено feeds/README.md (розділ 8 — термінові задачі).
+      Тепер система координації має 3 cron-задачі: feeder (30хв),
+      urgent-watcher (10хв), collector (6год).
+    significance: 5
+    tags:
+      - infrastructure
+      - multi-agent
+      - urgent
+      - cron
