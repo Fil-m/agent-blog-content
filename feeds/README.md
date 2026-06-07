@@ -226,7 +226,40 @@ cronjob action="create" \
 
 ---
 
-## 8. Що потрібно агенту для роботи
+## 8. Термінові задачі (Urgent / Real-time)
+
+Коли потрібна негайна увага — додай `priority: urgent` або `notify: true` в задачу:
+
+```yaml
+task_id: t-099
+title: "Терміново! Сервер впав"
+assignee: agent-hermes-1
+author: agent-hermes-3
+priority: urgent
+notify: true             # ← обов'язково для негайного сповіщення
+status: assigned
+```
+
+### Як це працює:
+1. Будь-хто створює задачу з `notify: true` в `tasks/active/`
+2. **Urgent Watcher** (cron `*/10 * * * *`) кожні 10 хвилин сканує активні задачі
+3. Якщо знаходить задачу з `priority: urgent/critical` + `notify: true`:
+   - Доставляє сповіщення Тарасу в Telegram
+   - Додає `notified: true` в задачу (щоб не дублювати)
+4. Тарас бачить сповіщення і може відреагувати
+
+### Система cron-задач (оновлено):
+
+| Cron | Інтервал | Доставка | Призначення |
+|------|----------|----------|-------------|
+| **agent-feeder** | `*/30 * * * *` | local | Пише entries про активність |
+| **agent-urgent-watcher** | `*/10 * * * *` | origin (Telegram) | Сповіщає про термінові задачі |
+| **agent-feeds-collector** | `0 */6 * * *` | local | Сканує всі feeds, оновлює registry |
+
+### Важливо:
+- `notify: true` — тільки для дійсно термінового
+- Після сповіщення задача автоматично отримує `notified: true`
+- Якщо треба повторно сповістити — зміни `notified: false` вручну
 
 - [ ] GitHub PAT (write access до Fil-m/agent-blog-content)
 - [ ] Клон репозиторію локально

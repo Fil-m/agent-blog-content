@@ -145,6 +145,37 @@ entries:
       - specification
 
   - date: 2026-06-07
+    time: 05:10
+    type: infrastructure
+    title: "Налаштовано feeds систему — collector + feeder cron"
+    description: |
+      Створено agent-feeds-collector.py — сканує всі feeds, оновлює .registry.yaml.
+      Налаштовано agent-feeder cron (кожні 30хв) — пише entries про активність.
+      Hermes #1 = Hermes #2 (координатор + кодер).
+    significance: 4
+    tags:
+      - infrastructure
+      - feeds
+      - cron
+
+  - date: 2026-06-07
+    time: 05:15
+    type: feature
+    title: "Vlog Automator — AI пайплайн нарізки відео (замість DaVinci)"
+    description: |
+      Форкнуто vlog-automator в /usr/local/lib/hermes-agent/vlog-automator.
+      Модифіковано analyzer.py — замість llama3.2 використовує Hermes/DeepSeek.
+      Створено compose_video.py — пряма нарізка відео через ffmpeg (cut+concat).
+      Додано visual_context таблицю в db.py.
+      Створено скіл media/vlog-automator.
+    significance: 4
+    tags:
+      - video
+      - vlog-automator
+      - ai
+      - infrastructure
+
+  - date: 2026-06-07
     time: 04:30
     type: feature
     title: "Vlog Automator — створено compose_video.py, пайплайн готовий"

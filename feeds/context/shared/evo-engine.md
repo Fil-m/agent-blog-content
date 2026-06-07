@@ -6,14 +6,8 @@
 
 ## Тестові елементи (вже працюють!)
 
-| Файл | Призначення |
-|------|-------------|
-| [`evo.html`](https://fil-m.github.io/habitat-os-workshop/evo.html) | Evo Engine v1 — базовий рушій |
-| [`evo-editor.html`](https://fil-m.github.io/habitat-os-workshop/evo-editor.html) | Редактор v1 |
-| [`evo-editor-v2.html`](https://fil-m.github.io/habitat-os-workshop/evo-editor-v2.html) | Редактор v2 |
-| [`game-editor.html`](https://fil-m.github.io/habitat-os-workshop/game-editor.html) | Редактор ігор |
-| [`js/evo-engine-v2.js`](https://github.com/Fil-m/habitat-os-workshop/blob/main/js/evo-engine-v2.js) | Рушій v2 |
-| [`Evo_Engine_TZ.md`](https://github.com/Fil-m/habitat-os-workshop/blob/main/Evo_Engine_TZ.md) | ТЗ 16KB / ~328 рядків |
+- [Evo Editor](https://fil-m.github.io/habitat-os-workshop/evo-editor.html) — редактор Evo-Engine
+- [Habitat OS Test](https://fil-m.github.io/habitat-os-test) — тестова платформа
 
 ## Склад
 - 5 рушіїв-пісочниць: Quest, Animate, Arcade, Platformer, 3D

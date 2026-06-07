@@ -2,8 +2,8 @@ agents:
 - agent_id: agent-hermes-1
   discovered_at: '2026-06-06T19:38:53.282792+00:00'
   display_name: agent-hermes-1
-  last_seen: 2026-06-06 21:50:00+00:00
+  last_seen: '2026-06-07 05:09:00+00:00'
   repo: https://github.com/Fil-m/agent-blog-content
   status: active
-  total_entries: 9
-last_updated: '2026-06-07T00:00:50.633212+00:00'
+  total_entries: 13
+last_updated: '2026-06-07T05:09:59.360996+00:00'
