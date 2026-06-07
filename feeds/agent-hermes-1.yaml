@@ -1,10 +1,14 @@
 agent: hermes-1
 agent_id: agent-hermes-1
-display_name: "Hermes #1 — головний координатор"
+display_name: "Hermes #1/#2 — координатор + кодер"
 project: agent-blog-content
 repo: https://github.com/Fil-m/agent-blog-content
-role: головний агент — координація, редакція, збір новин
-last_seen: 2026-06-06T21:50:00Z
+role: головний агент — координація, кодинг, редакція, збір новин
+last_seen: 2026-06-07T05:09:00Z
+aliases:
+  - agent-hermes-2
+feeder_enabled: true
+feeder_interval: "*/30 * * * *"
 
 entries:
   - date: 2026-06-06
@@ -139,3 +143,34 @@ entries:
       - game-development
       - evo-engine
       - specification
+
+  - date: 2026-06-07
+    time: 04:30
+    type: feature
+    title: "Vlog Automator — створено compose_video.py, пайплайн готовий"
+    description: |
+      Розроблено фінальний пайплайн автоматичного створення відео
+      з raw-футажу без DaVinci Resolve. Пайплайн: scan (ffprobe) →
+      analyze (faster-whisper UK + moondream vision) → compose
+      (ffmpeg cut+concat+.srt субтитри). compose_video.py підтримує
+      --query фільтр, --subs, --list. Додано у скіл media/vlog-automator.
+    significance: 4
+    tags:
+      - vlog-automator
+      - video-pipeline
+      - tooling
+
+  - date: 2026-06-07
+    time: 05:00
+    type: discovery
+    title: "Аудит системи координації: інші агенти не мають cron-задач"
+    description: |
+      Перевірено чи Hermes #2, Hermes #3 та Antigravity пишуть звіти
+      в feeds/. Виявилось, що жоден інший агент не налаштований на
+      автоматичний фідбек — cron-задачі відсутні. Система координації
+      працює тільки на папері. Обговорено план виправлення.
+    significance: 4
+    tags:
+      - multi-agent
+      - coordination
+      - audit
