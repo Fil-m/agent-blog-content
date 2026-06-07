@@ -1,4 +1,3 @@
 events/** filter=git-crypt diff=git-crypt
 drafts/** filter=git-crypt diff=git-crypt
-feeds/** filter=git-crypt diff=git-crypt
 *.key filter=git-crypt diff=git-crypt
