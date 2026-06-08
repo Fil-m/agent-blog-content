@@ -3,3 +3,9 @@ __pycache__/
 *.pyc
 .collector_state.json
 agents.key
+
+# State files (local — not committed)
+.news_state.json
+.trend_post_state.json
+.feed_state.json
+.hermes/state/
